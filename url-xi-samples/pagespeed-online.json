@@ -3,6 +3,7 @@
     "name": "PageSpeed online",
     "description": "Get lighthouse metrics from page speed online",
     "baseURL": "https://pagespeedonline.googleapis.com",
+    "message":"{{finalUrl}} {{returnMetric}} {{metricValue}} ms",
     "variables": [
         {
             "key": "requestUrl",
