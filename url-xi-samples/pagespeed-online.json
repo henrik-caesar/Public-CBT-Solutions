@@ -1,0 +1,77 @@
+{
+    "$schema": "https://files-apicasystem-com.s3-eu-west-1.amazonaws.com/schemas/url-xi-schema-v1-0.json",
+    "name": "PageSpeed online",
+    "description": "Get lighthouse metrics from page speed online",
+    "baseURL": "https://pagespeedonline.googleapis.com",
+    "variables": [
+        {
+            "key": "requestUrl",
+            "type": "url",
+            "usage": "input",
+            "value": "https://google.com"
+        },
+        {
+            "key": "strategy",
+            "type": "string",
+            "usage": "input",
+            "value": "DESKTOP",
+            "validation": "['DESKTOP','MOBILE'].find(element => element === value)"
+        },
+        {
+            "key": "returnMetric",
+            "type": "string",
+            "usage": "input",
+            "value": "interactive",
+            "validation": "['firstMeaningfulPaint', 'firstContentfulPaint', 'speedIndex', 'largestContentfulPaint', 'maxpotentialfid', 'interactive', 'totalBlockingTime'].find(element => element === value)"
+        },
+        { "key": "finalUrl", "type": "url", "usage": "inResponse" },
+        { "key": "lighthouseVersion", "type": "string", "usage": "inResponse" },
+        { "key": "metricValue", "type": "number", "usage": "returnValue","unit": "ms" },
+        { "key": "interactive", "type": "number", "usage": "inResponse","unit": "ms" },
+        { "key": "firstMeaningfulPaint", "type": "number", "usage": "inResponse","unit": "ms" },
+        { "key": "firstContentfulPaint", "type": "number", "usage": "inResponse","unit": "ms" },
+        { "key": "speedIndex", "type": "number", "usage": "inResponse","unit": "ms" },
+        { "key": "largestContentfulPaint", "type": "number", "usage": "inResponse","unit": "ms" },
+        { "key": "maxpotentialfid", "type": "number", "usage": "inResponse","unit": "ms" },
+        { "key": "totalBlockingTime", "type": "number", "usage": "inResponse","unit": "ms" },
+        
+        { "key": "serverResponseTime", "type": "number", "usage": "inResponse","unit": "ms"}
+    ],
+    "steps": [
+        {
+            "name": "Get Page speed metrics",
+            "requests": [
+                {
+                    "name": "Get metrics",
+                    "scripts": [
+                      {"name": "ConvertMetricName","scope": "before","script": [
+                      "let returnMetric=uxs.getVar('returnMetric')",
+                      "let metricName = returnMetric.replace(/[A-Z]/g, function($1){ return '-'+$1.toLowerCase(); })", 
+                      "logger.debug('metric name=%s',metricName)", 
+                      "if(returnMetric === 'maxpotentialfid')",
+                      "   metricName='max-potential-fid'",
+                      "uxs.setVar('metricName',metricName)"
+                      ]}
+                    ],
+                    "config": {
+                        "url": "/pagespeedonline/v5/runPagespeed",
+                        "params": { "strategy": "{{strategy}}","url":"{{requestUrl}}" }
+                    },
+                    "extractors": [  
+                      {"type": "jsonpath","expression": "$.lighthouseResult.finalUrl","variable": "finalUrl"}, 
+                      {"type": "jsonpath","expression": "$.lighthouseResult.lighthouseVersion","variable": "lighthouseVersion"},   
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.interactive.numericValue","variable": "interactive"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.first-meaningful-paint.numericValue","variable": "firstMeaningfulPaint"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.first-contentful-paint.numericValue","variable": "firstContentfulPaint"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.speed-index.numericValue","variable": "speedIndex"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.largest-contentful-paint.numericValue","variable": "largestContentfulPaint"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.max-potential-fid.numericValue","variable": "maxpotentialfid"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.total-blocking-time.numericValue","variable": "totalBlockingTime"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.{{metricName}}.numericValue","variable": "metricValue"},
+                      {"type": "jsonpath","expression": "$.lighthouseResult.audits.server-response-time.numericValue","variable": "serverResponseTime"}
+                    ] 
+                }
+            ]
+        }        
+    ]
+}
