@@ -1,0 +1,46 @@
+{
+	"info": {
+		"_postman_id": "29cf083f-7a4f-4fe8-8da6-c999a15aebe3",
+		"name": "Sushi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://api-wpm.apicasystem.com/v3/Checks/3332560/results?mostrecent=1&detail_level=1&auth_ticket=ACD583D5-DCBC-43DB-ABAC-E3E4E9BE0539",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api-wpm.apicasystem.com/v3/Checks/3332560/results?mostrecent=10&detail_level=1&auth_ticket=ACD583D5-DCBC-43DB-ABAC-E3E4E9BE0539",
+					"protocol": "https",
+					"host": [
+						"api-wpm",
+						"apicasystem",
+						"com"
+					],
+					"path": [
+						"v3",
+						"Checks",
+						"3332560",
+						"results"
+					],
+					"query": [
+						{
+							"key": "mostrecent",
+							"value": "10"
+						},
+						{
+							"key": "detail_level",
+							"value": "1"
+						},
+						{
+							"key": "auth_ticket",
+							"value": "ACD583D5-DCBC-43DB-ABAC-E3E4E9BE0539"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
